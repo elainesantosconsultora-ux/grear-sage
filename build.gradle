@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+version = '0.1.0'
+group = 'com.greatsage'
+base { archivesName = 'greatsage-1.20.1' }
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    runs {
+        client { workingDirectory project.file('run'); property 'forge.logging.console.level', 'debug'
+            mods { greatsage { source sourceSets.main } } }
+    }
+}
+repositories {
+    // Coloque aqui o JAR do Jujutsu Craft para compilar contra ele:
+    flatDir { dir 'libs' }
+}
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.3.0'
+    // compileOnly fg.deobf(files('libs/JujutsuCraft-ver50-forge-1.20.1.jar'))
+}
+tasks.named('jar') { finalizedBy 'reobfJar' }
