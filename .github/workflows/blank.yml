@@ -5,9 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Usar src.zip se existir
+        with: { fetch-depth: 0 }
+      - name: Usar o src zip mais novo
         run: |
-          if [ -f src.zip ]; then rm -rf src && unzip -o src.zip; fi
+          newest=""; best=0
+          for f in src*.zip; do
+            [ -f "$f" ] || continue
+            t=$(git log -1 --format=%ct -- "$f")
+            if [ "$t" -gt "$best" ]; then best=$t; newest="$f"; fi
+          done
+          if [ -n "$newest" ]; then echo "Usando $newest"; rm -rf src; unzip -o "$newest"; fi
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v3
